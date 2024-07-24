@@ -8,6 +8,8 @@ import { RegisterSchema } from "@/schemas";
 import { db } from "@/lib/db";
 import { getUserByEmail } from "@/data/user";
 import { revalidatePath } from "next/cache";
+import { generateVerificationToken } from "@/lib/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 
 
@@ -34,7 +36,8 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     }
   });
 
-  // TOD0: Send Verification Token email;
+  const verificationToken = await generateVerificationToken(email);
+  await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-  return { success: "User created!" };
+  return { success: "Confirmation email sent!" };
 };
